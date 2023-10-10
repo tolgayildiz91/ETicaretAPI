@@ -18,6 +18,12 @@ namespace ETicaretAPI.API.Controllers
         }
 
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(string id)
+        {
+           var product = await _productReadRepository.GetByIdAsync(id);
+            return Ok(product);
+        }
 
     }
 }
