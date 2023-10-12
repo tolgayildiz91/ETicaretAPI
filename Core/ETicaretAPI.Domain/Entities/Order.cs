@@ -12,7 +12,7 @@ namespace ETicaretAPI.Domain.Entities
         public string Description { get; set; }
         public int Adress { get; set; }
         public ICollection<Product> Products { get; set; }
-        public int CustomerId { get; set; }
+        public Guid CustomerId { get; set; }
         public Customer Customer { get; set; }
     }
 }
