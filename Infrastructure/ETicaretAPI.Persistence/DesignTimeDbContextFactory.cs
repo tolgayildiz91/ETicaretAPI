@@ -15,7 +15,7 @@ namespace ETicaretAPI.Persistence
         ETicaretAPIDbContext IDesignTimeDbContextFactory<ETicaretAPIDbContext>.CreateDbContext(string[] args)
         {
             DbContextOptionsBuilder<ETicaretAPIDbContext> dbContextOptionsBuilder = new();
-            dbContextOptionsBuilder.UseNpgsql(Configuration.ConnectionString);
+            dbContextOptionsBuilder.UseSqlServer(Configuration.ConnectionString);
             return new ETicaretAPIDbContext(dbContextOptionsBuilder.Options);
         }
     }

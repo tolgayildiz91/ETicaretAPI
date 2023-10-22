@@ -1,4 +1,6 @@
 ﻿using ETicaretAPI.Application.Repositories;
+using ETicaretAPI.Application.RequestParameters;
+using ETicaretAPI.Application.Services;
 using ETicaretAPI.Application.ViewModels.Products;
 using ETicaretAPI.Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -13,19 +15,36 @@ namespace ETicaretAPI.API.Controllers
     {
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IProductReadRepository _productReadRepository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IFileService _fileService;
 
-        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository)
+        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IWebHostEnvironment webHostEnvironment, IFileService fileService)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
+            _webHostEnvironment = webHostEnvironment;
+            _fileService = fileService;
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery]Pagination pagination)
         {
-           
-            return Ok(_productReadRepository.GetAll(false));
+            var totalCount = _productReadRepository.GetAll(false).Count();
+            var products = _productReadRepository.GetAll(false).Skip(pagination.Page * pagination.Size).Take(pagination.Size).Select(p => new
+            {
+                p.Name,
+                p.Stock,
+                p.Price,
+                p.Id,
+                p.CreatedDate,
+                p.UpdatedDate
+            }).ToList();
+           return Ok(new
+           {
+               totalCount,
+               products
+           });
         }
 
         [HttpGet("id")]
@@ -38,6 +57,10 @@ namespace ETicaretAPI.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(VM_Create_Product model)
         {
+            if (ModelState.IsValid)
+            {
+
+            }
             await _productWriteRepository.AddAsync(new()
             {
                 Name= model.Name,
@@ -68,6 +91,20 @@ namespace ETicaretAPI.API.Controllers
             return Ok();
 
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Upload()
+        {
+            // string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath,"resource/product-images");
+
+
+            await _fileService.UploadAsync("resource/product-images", Request.Form.Files);
+
+
+            return Ok();
+
+        }
+
 
     }
 }
