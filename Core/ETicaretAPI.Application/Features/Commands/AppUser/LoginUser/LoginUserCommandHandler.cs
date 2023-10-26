@@ -39,21 +39,27 @@ namespace ETicaretAPI.Application.Features.Commands.AppUser.LoginUser
 
             if(user == null)
             {
-                throw new NotFoundUserException("Kullanıcı veya şifre hatalı");
+                throw new NotFoundUserException();
             }
 
             SignInResult result = await _signInManager.CheckPasswordSignInAsync(user,request.Password,false);
-            if(result.Succeeded)
+            if(result.Succeeded)//Authentication başarılı!!
             {
                Token token =  _tokenHandler.CreateAccessToken(5);
 
-                return new()
+                return new LoginUserSuccessCommandResponse()
                 {
                     Token=token
                 };
             }
 
-            }
+            //return new LoginUserErrorCommandRespose()
+            //{
+            //    Message="Kullanıcı adı veya şifre hatalı"
+            //};
+
+            throw new AuthenticationErrorException();
+            
 
         }
     }
