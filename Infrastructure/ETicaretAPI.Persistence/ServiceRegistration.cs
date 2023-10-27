@@ -12,6 +12,7 @@ using ETicaretAPI.Persistence.Repositories.File;
 using ETicaretAPI.Domain.Entities.Identity;
 using ETicaretAPI.Application.Abstractions.Services;
 using ETicaretAPI.Persistence.Services;
+using ETicaretAPI.Application.Abstractions.Services.Authentications;
 
 namespace ETicaretAPI.Persistence
 {
@@ -50,6 +51,9 @@ namespace ETicaretAPI.Persistence
             services.AddScoped<IProductImageFileWriteRepository, ProductImageFileWriteRepository>();
 
             services.AddScoped<IUserService,UserService>();
+            services.AddScoped<IAuthService,AuthService>();
+            services.AddScoped<IExternalAuthentication, AuthService>();
+            services.AddScoped<IInternalAuthentication, AuthService>();
         }
     }
 }
